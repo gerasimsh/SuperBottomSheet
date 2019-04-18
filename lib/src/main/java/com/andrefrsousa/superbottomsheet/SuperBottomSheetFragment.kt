@@ -144,7 +144,12 @@ abstract class SuperBottomSheetFragment : BottomSheetDialogFragment() {
 
         // If is always expanded, there is no need to set the peek height
         if (!propertyIsAlwaysExpanded) {
-            behavior.peekHeight = getPeekHeight()
+            val r = resources
+            val px = TypedValue.applyDimension(
+                    TypedValue.COMPLEX_UNIT_DIP,
+                    getPeekHeight().toFloat(),
+                    r.displayMetrics)
+            behavior.peekHeight = px.toInt()
 
             sheetContainer.run {
                 minimumHeight = behavior.peekHeight
@@ -264,17 +269,12 @@ abstract class SuperBottomSheetFragment : BottomSheetDialogFragment() {
     //region PUBLIC
 
     @Dimension
-    open fun getPeekHeight(): Int = with(context!!.getAttrId(R.attr.superBottomSheet_peekHeight)) {
-        val peekHeightMin = when (this) {
-            INVALID_RESOURCE_ID -> resources.getDimensionPixelSize(R.dimen.super_bottom_sheet_peek_height)
-            else -> resources.getDimensionPixelSize(this)
-        }
+    open fun getPeekHeight(): Int =
+
 
         // 16:9 ratio
-        return with(resources.displayMetrics) {
-            Math.max(peekHeightMin, heightPixels - heightPixels * 9 / 16)
-        }
-    }
+         200
+
 
     @Dimension
     open fun getDim(): Float = with(context!!.getAttrId(R.attr.superBottomSheet_dim)) {
