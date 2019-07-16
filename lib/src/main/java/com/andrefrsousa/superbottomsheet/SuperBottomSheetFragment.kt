@@ -41,6 +41,7 @@ import android.view.*
 
 abstract class SuperBottomSheetFragment : BottomSheetDialogFragment() {
 
+
     private lateinit var sheetTouchOutsideContainer: View
     private lateinit var sheetContainer: CornerRadiusFrameLayout
     private lateinit var behavior: BottomSheetBehavior<*>
@@ -192,15 +193,22 @@ abstract class SuperBottomSheetFragment : BottomSheetDialogFragment() {
         // Override sheet callback events
         behavior.setBottomSheetCallback(object : BottomSheetBehavior.BottomSheetCallback() {
             override fun onStateChanged(bottomSheet: View, newState: Int) {
-                if (newState == BottomSheetBehavior.STATE_HIDDEN) {
-                    setStatusBarColor(1f)
-                    dialog.cancel()
+                changeState(newState)
+                when (newState) {
+
+                    BottomSheetBehavior.STATE_HIDDEN -> {
+                        setStatusBarColor(1f)
+                        dialog.cancel()
+
+                    }
+
                 }
             }
 
             override fun onSlide(bottomSheet: View, slideOffset: Float) {
                 setRoundedCornersOnScroll(bottomSheet, slideOffset)
                 setStatusBarColorOnScroll(bottomSheet, slideOffset)
+                bottomSheetSlide(slideOffset)
             }
         })
     }
@@ -272,8 +280,8 @@ abstract class SuperBottomSheetFragment : BottomSheetDialogFragment() {
     open fun getPeekHeight(): Int =
 
 
-        // 16:9 ratio
-         200
+            // 16:9 ratio
+            200
 
 
     @Dimension
@@ -349,6 +357,13 @@ abstract class SuperBottomSheetFragment : BottomSheetDialogFragment() {
             else -> resources.getBoolean(this)
         }
     }
+
+    open fun changeState(state: Int) {
+    }
+
+    open fun bottomSheetSlide(state: Float) {
+    }
+
 
     //endregion
 }
