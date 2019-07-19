@@ -36,6 +36,7 @@ import android.support.annotation.UiThread
 import android.support.design.widget.BottomSheetBehavior
 import android.support.design.widget.BottomSheetDialogFragment
 import android.support.v4.content.ContextCompat
+import android.util.Log
 import android.util.TypedValue
 import android.view.*
 
@@ -45,7 +46,7 @@ abstract class SuperBottomSheetFragment : BottomSheetDialogFragment() {
     private lateinit var sheetTouchOutsideContainer: View
     private lateinit var sheetContainer: CornerRadiusFrameLayout
     private lateinit var behavior: BottomSheetBehavior<*>
-
+    private var bottomSheetState = BottomSheetBehavior.STATE_HIDDEN
     // Customizable properties
     private var propertyDim = 0f
     private var propertyCornerRadius = 0f
@@ -78,6 +79,7 @@ abstract class SuperBottomSheetFragment : BottomSheetDialogFragment() {
         // Init properties
         propertyDim = getDim()
         propertyCornerRadius = getCornerRadius()
+
         propertyStatusBarColor = getStatusBarColor()
         propertyIsAlwaysExpanded = isSheetAlwaysExpanded()
         propertyIsSheetCancelable = isSheetCancelable()
@@ -120,17 +122,18 @@ abstract class SuperBottomSheetFragment : BottomSheetDialogFragment() {
         iniBottomSheetUiComponents()
     }
 
-    //region UI METHODS
 
     @UiThread
     private fun iniBottomSheetUiComponents() {
+        //Log.d("SBSH", "initBSH ")
         // Store views references
         sheetContainer = dialog.findViewById(R.id.super_bottom_sheet)
         sheetTouchOutsideContainer = dialog.findViewById(R.id.touch_outside)
 
         // Set the bottom sheet radius
         sheetContainer.setBackgroundColor(getBackgroundColor())
-        sheetContainer.setCornerRadius(propertyCornerRadius)
+        if (bottomSheetState != BottomSheetBehavior.STATE_EXPANDED)
+            sheetContainer.setCornerRadius(propertyCornerRadius)
 
         // Load bottom sheet behaviour
         behavior = BottomSheetBehavior.from(sheetContainer)
@@ -194,6 +197,7 @@ abstract class SuperBottomSheetFragment : BottomSheetDialogFragment() {
         behavior.setBottomSheetCallback(object : BottomSheetBehavior.BottomSheetCallback() {
             override fun onStateChanged(bottomSheet: View, newState: Int) {
                 changeState(newState)
+                bottomSheetState = newState
                 when (newState) {
 
                     BottomSheetBehavior.STATE_HIDDEN -> {
